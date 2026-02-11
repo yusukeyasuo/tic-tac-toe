@@ -16,20 +16,37 @@ function Square({ value, onSquareClick }: { value: string | null, onSquareClick:
 }
 
 export default function Board() {
-  // 1. 9個のマス目の状態を一つの配列で管理する
   const [squares, setSquares] = useState<(string | null)[]>(Array(9).fill(null));
+  // 1. 次が X かどうかを管理する State を追加（初期値は true）
+  const [xIsNext, setXIsNext] = useState<boolean>(true);
 
   function handleClick(i: number) {
-    // 2. 配列をコピーして、クリックされた場所だけ書き換える（イミュータブルな更新）
+    // すでに値が入っている場合は、何もしない（上書き禁止）
+    if (squares[i]) {
+      return;
+    }
+
     const nextSquares = squares.slice();
-    nextSquares[i] = "X";
+    
+    // 2. xIsNext の値によって "X" か "O" を入れる
+    if (xIsNext) {
+      nextSquares[i] = "X";
+    } else {
+      nextSquares[i] = "O";
+    }
+    
     setSquares(nextSquares);
+    // 3. ターンを交代させる
+    setXIsNext(!xIsNext);
   }
+
+  // 4. 次のプレイヤーを表示するメッセージ
+  const status = "Next player: " + (xIsNext ? "X" : "O");
 
   return (
     <div className="p-10">
+      <div className="mb-4 text-xl font-bold">{status}</div> {/* ステータス表示を追加 */}
       <div className="grid grid-cols-3 w-30">
-        {/* 3. 各 Square に値と実行してほしい関数を渡す（Props） */}
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
         <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
