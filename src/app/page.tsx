@@ -3,11 +3,11 @@
 
 import { useState } from 'react';
 
-// Square は「値」と「クリックされた時の関数」を親から受け取るだけにする
 function Square({ value, onSquareClick }: { value: string | null, onSquareClick: () => void }) {
   return (
     <button 
-      className="w-10 h-10 border border-gray-400 text-xl font-bold bg-white hover:bg-gray-100"
+      // text-black を追加して文字を真っ黒に、w-12 h-12 で少し大きくしました
+      className="w-12 h-12 border-2 border-gray-600 text-2xl font-bold bg-white text-black hover:bg-gray-200 flex items-center justify-center"
       onClick={onSquareClick}
     >
       {value}
@@ -17,36 +17,25 @@ function Square({ value, onSquareClick }: { value: string | null, onSquareClick:
 
 export default function Board() {
   const [squares, setSquares] = useState<(string | null)[]>(Array(9).fill(null));
-  // 1. 次が X かどうかを管理する State を追加（初期値は true）
   const [xIsNext, setXIsNext] = useState<boolean>(true);
 
   function handleClick(i: number) {
-    // すでに値が入っている場合は、何もしない（上書き禁止）
     if (squares[i]) {
       return;
     }
-
     const nextSquares = squares.slice();
-    
-    // 2. xIsNext の値によって "X" か "O" を入れる
-    if (xIsNext) {
-      nextSquares[i] = "X";
-    } else {
-      nextSquares[i] = "O";
-    }
-    
+    nextSquares[i] = xIsNext ? "X" : "O";
     setSquares(nextSquares);
-    // 3. ターンを交代させる
     setXIsNext(!xIsNext);
   }
 
-  // 4. 次のプレイヤーを表示するメッセージ
   const status = "Next player: " + (xIsNext ? "X" : "O");
 
   return (
-    <div className="p-10">
-      <div className="mb-4 text-xl font-bold">{status}</div> {/* ステータス表示を追加 */}
-      <div className="grid grid-cols-3 w-30">
+    // min-h-screen と bg-white で画面全体を白背景に固定し、text-black で文字を濃くします
+    <div className="min-h-screen bg-white p-10 text-black">
+      <div className="mb-4 text-2xl font-extrabold">{status}</div>
+      <div className="grid grid-cols-3 w-36">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
         <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
